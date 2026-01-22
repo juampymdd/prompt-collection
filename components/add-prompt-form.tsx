@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Plus, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -17,22 +17,24 @@ import {
   DialogDescription,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 const promptSchema = z.object({
   title: z.string().min(3, "El título debe tener al menos 3 caracteres"),
-  description: z.string().min(10, "La descripción debe tener al menos 10 caracteres"),
+  description: z
+    .string()
+    .min(10, "La descripción debe tener al menos 10 caracteres"),
   content: z.string().min(20, "El contenido debe tener al menos 20 caracteres"),
   category: z.string().min(1, "La categoría es requerida"),
-})
+});
 
-type PromptFormValues = z.infer<typeof promptSchema>
+type PromptFormValues = z.infer<typeof promptSchema>;
 
 export function AddPromptForm() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [tags, setTags] = useState<string[]>([])
-  const [tagInput, setTagInput] = useState("")
+  const [isOpen, setIsOpen] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
 
   const {
     register,
@@ -41,18 +43,18 @@ export function AddPromptForm() {
     formState: { errors, isSubmitting },
   } = useForm<PromptFormValues>({
     resolver: zodResolver(promptSchema),
-  })
+  });
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()])
-      setTagInput("")
+      setTags([...tags, tagInput.trim()]);
+      setTagInput("");
     }
-  }
+  };
 
   const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove))
-  }
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
 
   const onSubmit = async (data: PromptFormValues) => {
     // Preparado para futura integración con base de datos
@@ -62,29 +64,31 @@ export function AddPromptForm() {
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    }
-    
-    console.log("[v0] Prompt data ready for DB:", promptData)
-    
+    };
+
+    console.log("[v0] Prompt data ready for DB:", promptData);
+
     // TODO: Integrar con API/Base de datos
     // await createPrompt(promptData)
-    
-    alert("Prompt guardado (simulado). Integrá con tu base de datos para persistir.")
-    
-    reset()
-    setTags([])
-    setIsOpen(false)
-  }
+
+    alert(
+      "Prompt guardado (simulado). Integrá con tu base de datos para persistir.",
+    );
+
+    reset();
+    setTags([]);
+    setIsOpen(false);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+      {/*<DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
           Agregar Prompt
         </Button>
-      </DialogTrigger>
-      
+      </DialogTrigger>*/}
+
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Agregar Nuevo Prompt</DialogTitle>
@@ -92,7 +96,7 @@ export function AddPromptForm() {
             Completá los campos para agregar un nuevo prompt a tu colección.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
           <div className="space-y-2">
             <Label htmlFor="title">Título</Label>
@@ -114,7 +118,9 @@ export function AddPromptForm() {
               {...register("description")}
             />
             {errors.description && (
-              <p className="text-sm text-destructive">{errors.description.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.description.message}
+              </p>
             )}
           </div>
 
@@ -126,7 +132,9 @@ export function AddPromptForm() {
               {...register("category")}
             />
             {errors.category && (
-              <p className="text-sm text-destructive">{errors.category.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.category.message}
+              </p>
             )}
           </div>
 
@@ -140,8 +148,8 @@ export function AddPromptForm() {
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    e.preventDefault()
-                    addTag()
+                    e.preventDefault();
+                    addTag();
                   }
                 }}
               />
@@ -177,12 +185,18 @@ export function AddPromptForm() {
               {...register("content")}
             />
             {errors.content && (
-              <p className="text-sm text-destructive">{errors.content.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.content.message}
+              </p>
             )}
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsOpen(false)}
+            >
               Cancelar
             </Button>
             <Button type="submit" disabled={isSubmitting}>
@@ -192,5 +206,5 @@ export function AddPromptForm() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
